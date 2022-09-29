@@ -8,7 +8,10 @@ class Review(CommonModel):
 
     user = models.ForeignKey("users.User", on_delete=models.CASCADE)
     room = models.ForeignKey(
-        "rooms.Room", null=True, blank=True, on_delete=models.SET_NULL
+        "rooms.Room",
+        null=True,
+        blank=True,
+        on_delete=models.SET_NULL,
     )
 
     experience = models.ForeignKey(
