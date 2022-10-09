@@ -6,12 +6,17 @@ from common.models import CommonModel
 class Review(CommonModel):
     """review from a user to a Room or experience"""
 
-    user = models.ForeignKey("users.User", on_delete=models.CASCADE)
+    user = models.ForeignKey(
+        "users.User",
+        on_delete=models.CASCADE,
+        related_name="reviews",
+    )
     room = models.ForeignKey(
         "rooms.Room",
         null=True,
         blank=True,
         on_delete=models.SET_NULL,
+        related_name="reviews",
     )
 
     experience = models.ForeignKey(
@@ -19,6 +24,7 @@ class Review(CommonModel):
         null=True,
         blank=True,
         on_delete=models.CASCADE,
+        related_name="reviews",
     )
 
     payload = models.TextField()

@@ -17,7 +17,7 @@ class Category(CommonModel):
     )
 
     def __str__(self) -> Self:
-        return f"{self.kind.Title} :  {self.name}"
+        return f"{self.kind} :  {self.name}"
 
     class Meta:
         verbose_name_plural = "Categories"
