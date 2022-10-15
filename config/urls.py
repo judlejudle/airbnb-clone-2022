@@ -9,6 +9,7 @@ admin.site.enable_nav_sidebar = False
 
 urlpatterns = [
     path("admin/", admin.site.urls),
-    path("rooms/", include("rooms.urls")),
-    path("categories/", include("categories.urls")),
+    path("api/v1/rooms/", include("rooms.urls")),
+    path("api/v1/categories/", include("categories.urls")),
+    path("api/v1/experiences/", include("experiences.urls")),
 ]
