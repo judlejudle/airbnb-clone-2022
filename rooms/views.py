@@ -1,4 +1,5 @@
 from http.client import NOT_FOUND
+from multiprocessing.sharedctypes import Value
 from rest_framework.views import APIView
 from django.db import transaction
 from rest_framework.response import Response
@@ -9,11 +10,13 @@ from rest_framework.exceptions import (
     PermissionDenied,
 )
 from rest_framework.status import HTTP_204_NO_CONTENT
-from .models import Amenity
 from .models import Room
+from .models import Amenity
 from categories.models import Category
 from .serializers import AmenitySerializer, RoomDetailSerializer
 from .serializers import RoomListSerializer
+from reviews.serializers import ReviewSerializer
+from django.conf import settings
 
 
 class Amenities(APIView):
@@ -67,7 +70,9 @@ class AmenityDetail(APIView):
 class Rooms(APIView):
     def get(self, request):
         all_rooms = Room.objects.all()
-        serializer = RoomListSerializer(all_rooms, many=True)
+        serializer = RoomListSerializer(
+            all_rooms, many=True, context={"request": request}
+        )
         return Response(serializer.data)
 
     def post(self, request):
@@ -113,7 +118,7 @@ class RoomDetail(APIView):
 
     def get(self, request, pk):
         room = self.get_object(pk)
-        serializer = RoomDetailSerializer(room)
+        serializer = RoomDetailSerializer(room, context={"request": request})
         return Response(serializer.data)
 
     #  챌린지~
@@ -132,3 +137,53 @@ class RoomDetail(APIView):
             raise PermissionDenied
         room.delete()
         return Response(status=HTTP_204_NO_CONTENT)
+
+
+class RoomReviews(APIView):
+    def get_object(self, pk):
+        try:
+            return Room.objects.get(pk=pk)
+        except Room.DoesNotExist:
+            raise NotFound
+
+    def get(self, request, pk):
+        try:
+            page = request.query_params.get("page", 1)
+            page = int(page)
+        except ValueError:
+            page = 1
+        start = (page - 1) * settings.page_size
+        end = start + settings.page_size
+        room = self.get_object(pk)
+        serializer = ReviewSerializer(
+            room.reviews.all()[start:end],
+            many=True,
+        )
+        return Response(serializer.data)
+
+
+class RoomAmenities(APIView):
+    def get_object(self, pk):
+        try:
+            return Room.objects.get(pk=pk)
+        except Amenity.DoesNotExist:
+            raise NotFound
+
+    def get(self, request, pk):
+        try:
+            page = int(request.query_params.get("page", 1))
+        except ValueError:
+            page = 1
+        start = (page - 1) * settings.page_size
+        end = start + settings.page_size
+        room = self.get_object(pk)
+        serializer = AmenitySerializer(
+            room.amenities.all()[start:end],
+            many=True,
+        )
+        return Response(serializer.data)
+
+
+class RoomPhotos(APIView):
+    def post(self, request, pk):
+        pass

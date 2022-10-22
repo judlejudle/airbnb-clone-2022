@@ -1,4 +1,3 @@
-from typing_extensions import Self
 from django.db import models
 from common.models import CommonModel
 
@@ -16,7 +15,7 @@ class Category(CommonModel):
         choices=CategoryKindChoices.choices,
     )
 
-    def __str__(self) -> Self:
+    def __str__(self) -> str:
         return f"{self.kind} :  {self.name}"
 
     class Meta:
