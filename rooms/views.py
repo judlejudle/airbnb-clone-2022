@@ -152,8 +152,8 @@ class RoomReviews(APIView):
             page = int(page)
         except ValueError:
             page = 1
-        start = (page - 1) * settings.page_size
-        end = start + settings.page_size
+        start = (page - 1) * settings.PAGE_SIZE
+        end = start + settings.PAGE_SIZE
         room = self.get_object(pk)
         serializer = ReviewSerializer(
             room.reviews.all()[start:end],
@@ -174,8 +174,8 @@ class RoomAmenities(APIView):
             page = int(request.query_params.get("page", 1))
         except ValueError:
             page = 1
-        start = (page - 1) * settings.page_size
-        end = start + settings.page_size
+        start = (page - 1) * settings.PAGE_SIZE
+        end = start + settings.PAGE_SIZE
         room = self.get_object(pk)
         serializer = AmenitySerializer(
             room.amenities.all()[start:end],
